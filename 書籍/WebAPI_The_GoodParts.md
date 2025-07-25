@@ -19,3 +19,36 @@
 4. 改造しやすい(Hackable)URI
 5. サーバー側のアーキテクチャが反映されていないURI
 6. ルールが統一されたURI
+
+### X-HTTP-Method-Override ヘッダ
+HTTPメソッドを上書きするためのヘッダで、POSTリクエストに対してPUTやDELETEなどのメソッドを指定することができる。
+HTMLフォームではGETとPOSTしか使用できないため、PUTやDELETEを使用したい場合にこのヘッダを使用する。
+#### 例
+```http
+POST /api/resource HTTP/1.1
+Host: example.com
+Content-Type: application/json
+{
+  "name": "example"
+}
+X-HTTP-Method-Override: PUT
+```
+
+クライアント側ソースコードでの指定方法例
+JavaScript（Fetch API）の場合：
+```javascript
+fetch('/api/resource', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-HTTP-Method-Override': 'PUT'
+  },
+  body: JSON.stringify({
+    name: 'example'
+  })
+  });
+```
+まとめ
+- クライアント開発時に使用している一部のライブラリ、HTMLフォームはGET、POSTのみしか対応していない場合があり、 PUT や DELETE を直接送れないことがある
+
+- サーバー側で X-HTTP-Method-Override を検知して、元のリクエストメソッドを「上書き」する
